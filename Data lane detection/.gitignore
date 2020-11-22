@@ -1,4 +1,7 @@
 .ipynb_checkpoints
+images.pkl
+labels.pkl
+
 raw/*
 warped/*
 flipped/raw/*
