@@ -46,3 +46,4 @@ I am getting the images with a rgb sensor and generate the predict with the mode
 - Composed image
 ![Blend images](https://github.com/italovinicius18/Ego-Lane-Detection-on-CARLA/blob/main/Carla%20FCN/compose/22312.jpg)
 
+If you want to run this model in you computer use [this](https://github.com/italovinicius18/Ego-Lane-Detection-on-CARLA/blob/main/environment.yml) environment on conda
