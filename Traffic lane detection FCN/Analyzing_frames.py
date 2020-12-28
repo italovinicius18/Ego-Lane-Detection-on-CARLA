@@ -1,13 +1,13 @@
 import glob
 import os
 import sys
-#try:
-#    sys.path.append(glob.glob('../../carla/dist/carla-*%d.%d-%s.egg' % (
-#        sys.version_info.major,
-#        sys.version_info.minor,
-#        'win-amd64' if os.name == 'nt' else 'linux-x86_64'))[0])
-#except IndexError:
-#    pass
+try:
+    sys.path.append(glob.glob('../../carla/dist/carla-*%d.%d-%s.egg' % (
+        sys.version_info.major,
+        sys.version_info.minor,
+        'win-amd64' if os.name == 'nt' else 'linux-x86_64'))[0])
+except IndexError:
+    pass
 import carla
 
 from Draw_detected_lanes import road_lines
@@ -20,13 +20,16 @@ import cv2
 IM_WIDTH = 1280
 IM_HEIGHT = 720
 
-def process_img(image):
+def process_img(image,name):
     image_vect = image.raw_data
-    image = np.array(image_vect).reshape((image.height,image.width,4))
-    image = image[:, :, :3]
-    cv2.imshow("Analized image", road_lines(image))
-    cv2.waitKey(1)
+    image = np.array(image_vect)
+    image = np.reshape(image,(IM_HEIGHT,IM_WIDTH,4))
+    image = image[:,:,:3]
+    road_lines(image,name)
 
+    cv2.imwrite(f'./raw/{name}.jpg',image)
+
+os.system('cls')
 actor_list = []
 light_weather = []
 try:
@@ -37,7 +40,6 @@ try:
     blueprint_library = world.get_blueprint_library()
 
     bp = blueprint_library.filter('model3')[0]
-    print(bp)
 
     spawn_point = random.choice(world.get_map().get_spawn_points())
 
@@ -52,14 +54,15 @@ try:
     blueprint.set_attribute('image_size_x', f'{IM_WIDTH}')
     blueprint.set_attribute('image_size_y', f'{IM_HEIGHT}')
 
-    spawn_point = carla.Transform(carla.Location(x=1, z=2))
+    spawn_point = carla.Transform(carla.Location(x=2.0, y=0.0, z=1.8))
     sensor = world.spawn_actor(blueprint, spawn_point, attach_to=vehicle)
 
     actor_list.append(sensor)
 
-    #sensor.listen(lambda image: process_img(image))
+    sensor.listen(lambda image: process_img(image,image.frame))
 
-    time.sleep(100)
+    # Set the max time running
+    time.sleep(50)
 
 finally:
     print('destroying actors')
